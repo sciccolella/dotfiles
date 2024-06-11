@@ -1,0 +1,168 @@
+## vim:ft=zsh
+#
+
+# https://thevaluable.dev/zsh-install-configure-mouseless/
+
+# PROMPT setup
+precmd-newline() { print -P '' }
+precmd-git-status() {
+  psvar=()
+  vcs_info 
+  local STATUS=$(command git status --porcelain 2> /dev/null | tail -n1)
+
+  if [[ -n $STATUS ]]; then
+    psvar[1]="%F{#eed49f}${vcs_info_msg_0_}%f"
+  else
+    psvar[1]="%F{#a6da95}${vcs_info_msg_0_}%f"
+  fi
+}
+precmd-venvs() {
+  psvar[2]=""
+  if [[ -n $VIRTUAL_ENV ]]; then
+    psvar[2]+="%F{#cad3f5} v:${VIRTUAL_ENV##*/} %f"
+  fi
+  if [[ -n $CONDA_DEFAULT_ENV ]]; then
+    psvar[2]+="%F{#cad3f5} c:${CONDA_DEFAULT_ENV}%f "
+  fi
+  if [[ -n $CONTAINER_ID ]]; then
+    psvar[2]+="%F{#cad3f5} ${CONTAINER_ID}%f "
+  fi
+}
+precmd-exitcode() {
+  local LAST_EC=$?
+  psvar[3]=""
+  if [[ $LAST_EC -ne 0 ]]; then 
+    psvar[3]="%F{#ed8796}[${LAST_EC}]%f "
+  fi
+}
+precmd-timer() {
+  if [ $cmd_start ]; then
+    local now=$(($(print -P %D{%s%6.}) / 1000))
+    local d_ms=$(($now - $cmd_start))
+    local d_s=$((d_ms / 1000))
+    local ms=$((d_ms % 1000))
+    local s=$((d_s % 60))
+    local m=$(((d_s / 60) % 60))
+    local h=$((d_s / 3600))
+
+
+    if   ((h > 0)); then psvar[4]=$(printf %2dh%2dm $h $m)
+    elif ((m > 0)); then psvar[4]=$(printf %2dm%2ds $m $s)
+    elif ((s > 0)); then psvar[4]=$(printf %2d.%2ds $s $ms)
+    else psvar[4]=$(printf %4dms $ms)
+    fi
+
+    unset cmd_start
+  else
+    # Clear previous result when hitting Return with no command to execute
+    psvar[4]=" ---- "
+  fi
+}
+preexec() {
+  cmd_start=$(($(print -P %D{%s%6.}) / 1000))
+}
+
+function +vi-git-st() {
+    local ahead behind unstaged staged
+    local porcelain=$(command git status --porcelain 2> /dev/null)
+
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
+      echo $porcelain | grep '??' &> /dev/null ; then
+          hook_com[misc]+='?'
+    fi
+
+    unstaged=$(echo $porcelain | grep '^ M' 2>/dev/null | wc -l)
+    (( $unstaged )) && hook_com[misc]+='*'
+    staged=$(echo $porcelain | grep '^M' 2>/dev/null | wc -l)
+    (( $staged )) && hook_com[misc]+='+'
+    
+    # for git prior to 1.7
+    # ahead=$(git rev-list origin/${hook_com[branch]}..HEAD | wc -l)
+    ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
+    (( $ahead )) && hook_com[misc]+='↑'
+
+    # for git prior to 1.7
+    # behind=$(git rev-list HEAD..origin/${hook_com[branch]} | wc -l)
+    behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+    (( $behind )) && hook_com[misc]+='↓'
+}
+
+autoload -Uz vcs_info
+zstyle ':vcs_info:git*+set-message:*' hooks git-st
+zstyle ':vcs_info:git:*' formats '%b %m'
+
+precmd_functions+=(precmd-newline precmd-git-status precmd-venvs precmd-exitcode precmd-timer)
+setopt PROMPT_SUBST
+PNEWLINE=$'\n'
+# psvar[4]->Elapsed time | psvar[2]->Virtual envs
+PROMPT='%F{white}${psvar[4]} %f${psvar[2]}${PNEWLINE}' # first line
+PROMPT+='%F{#d1b3f5}%n@%m%f:%F{#91a8f7}%~%f ' # user@host:path/to/pwd
+PROMPT+='${psvar[1]} ' # psvar[1]->git status
+PROMPT+='${PNEWLINE}${psvar[3]}%# ' #psvar[3]->Error code
+
+
+# Handy aliases
+alias ...=../..
+alias ....=../../..
+alias .....=../../../..
+alias ......=../../../../..
+alias 1='cd -1'
+alias 2='cd -2'
+alias 3='cd -3'
+alias 4='cd -4'
+alias 5='cd -5'
+alias 6='cd -6'
+alias 7='cd -7'
+alias 8='cd -8'
+alias 9='cd -9'
+alias _='sudo '
+alias l='ls -lah'
+alias ll='ls -lh'
+alias md='mkdir -p'
+alias rd=rmdir
+alias ls='ls --color=auto'
+
+# Colorize completions using default `ls` colors.
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' menu select
+zstyle ':completion:*' squeeze-slashes true
+
+# Setup config for SSH and SCP (and derivates)
+zstyle ':completion:*:(ssh|scp|rsync|sshfs|mosh):*:users' users 
+zstyle -e ':completion:*:hosts' hosts 'reply=( $(grep "^Host" $HOME/.ssh/config | tr -s " " | cut -d" " -f2 | sort -u | xargs) )'
+zstyle ':completion:*:(scp|sshfs|mosh):*' format ' %F{#f5a97f}-- %d --%f'
+zstyle ':completion:*:(scp|rsync|sshfs|mosh):*' group-name ''
+zstyle ':completion:*:(scp|rsync|sshfs):*' group-order hosts files 
+
+autoload -Uz compinit; compinit
+
+# Set history file
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+
+# Search history with written prefix with arrow keys
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+bindkey "${terminfo[kLFT5]}" backward-word
+bindkey "${terminfo[kRIT5]}" forward-word
+
+# Alternative to the previous, not sure what it changes
+autoload -Uz history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "$terminfo[kcuu1]" history-beginning-search-backward-end
+bindkey "$terminfo[kcud1]" history-beginning-search-forward-end
+
+# Make custom autocomplete
+# https://www.dolthub.com/blog/2021-11-15-zsh-completions-with-subcommands/
+
+# Disable Prompt changing behaviours
+export CONDA_CHANGEPS1=false
+export VIRTUAL_ENV_DISABLE_PROMPT=true
+
