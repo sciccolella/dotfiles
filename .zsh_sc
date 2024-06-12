@@ -122,6 +122,7 @@ alias md='mkdir -p'
 alias rd=rmdir
 alias ls='ls --color=auto'
 
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 # Colorize completions using default `ls` colors.
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu select
@@ -149,15 +150,16 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search
 bindkey "^[[B" down-line-or-beginning-search
-bindkey "${terminfo[kLFT5]}" backward-word
-bindkey "${terminfo[kRIT5]}" forward-word
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+
 
 # Alternative to the previous, not sure what it changes
-autoload -Uz history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "$terminfo[kcuu1]" history-beginning-search-backward-end
-bindkey "$terminfo[kcud1]" history-beginning-search-forward-end
+# autoload -Uz history-search-end
+# zle -N history-beginning-search-backward-end history-search-end
+# zle -N history-beginning-search-forward-end history-search-end
+# bindkey "$terminfo[kcuu1]" history-beginning-search-backward-end
+# bindkey "$terminfo[kcud1]" history-beginning-search-forward-end
 
 # Make custom autocomplete
 # https://www.dolthub.com/blog/2021-11-15-zsh-completions-with-subcommands/
