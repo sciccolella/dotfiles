@@ -16,6 +16,13 @@ precmd-git-status() {
     psvar[1]="%F{#a6da95}${vcs_info_msg_0_}%f"
   fi
 }
+precmd-ssh() {
+  if [[ -n $SSH_CLIENT ]]; then
+    psvar[5]+="%F{#8bd5ca} %n@%m%f"
+  else
+    psvar[5]="%F{#d1b3f5} %n@%f"
+  fi
+}
 precmd-venvs() {
   psvar[2]=""
   if [[ -n $VIRTUAL_ENV ]]; then
@@ -91,12 +98,12 @@ autoload -Uz vcs_info
 zstyle ':vcs_info:git*+set-message:*' hooks git-st
 zstyle ':vcs_info:git:*' formats '%b %m'
 
-precmd_functions+=(precmd-newline precmd-git-status precmd-venvs precmd-exitcode precmd-timer)
+precmd_functions+=(precmd-newline precmd-git-status precmd-venvs precmd-exitcode precmd-timer precmd-ssh)
 setopt PROMPT_SUBST
 PNEWLINE=$'\n'
 # psvar[4]->Elapsed time | psvar[2]->Virtual envs
 PROMPT='%F{white}${psvar[4]} %f${psvar[2]}${PNEWLINE}' # first line
-PROMPT+='%F{#d1b3f5}%n@%m%f:%F{#91a8f7}%~%f ' # user@host:path/to/pwd
+PROMPT+='${psvar[5]}:%F{#91a8f7}%~%f ' # user@host:path/to/pwd
 PROMPT+='${psvar[1]} ' # psvar[1]->git status
 PROMPT+='${PNEWLINE}${psvar[3]}%# ' #psvar[3]->Error code
 
