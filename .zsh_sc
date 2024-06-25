@@ -20,7 +20,7 @@ precmd-ssh() {
   if [[ -n $SSH_CLIENT ]]; then
     psvar[5]+="%F{#8bd5ca} %n@%m%f"
   else
-    psvar[5]="%F{#d1b3f5} %n@%f"
+    psvar[5]="%F{#d1b3f5} %n%f"
   fi
 }
 precmd-venvs() {
