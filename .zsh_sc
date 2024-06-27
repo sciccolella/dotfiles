@@ -17,7 +17,7 @@ precmd-git-status() {
   fi
 }
 precmd-ssh() {
-  if [[ -n $SSH_CLIENT ]]; then
+  if [[ -n $SSH_CLIENT ]] || [[ -n $SSH_TTY ]]; then
     psvar[5]+="%F{#8bd5ca} %n@%m%f"
   else
     psvar[5]="%F{#d1b3f5} %n%f"
