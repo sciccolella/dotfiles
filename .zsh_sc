@@ -34,6 +34,9 @@ precmd-venvs() {
   if [[ -n $CONTAINER_ID ]]; then
     psvar[2]+="%F{#cad3f5} ${CONTAINER_ID}%f "
   fi
+  if [[ -n $IN_NIX_SHELL ]]; then
+    psvar[2]+="%F{#f5a97f}󱄅 ${NIX_SHELL_NAME}%f "
+  fi
 }
 precmd-exitcode() {
   local LAST_EC=$?
