@@ -5,5 +5,5 @@ oc_user="VPN-USERNAME"
 oc_pwd='VPN-PASSWORD'
 oc_gateway="VPN-GATEWAY"
 
-source path/to/.zsh_sc
+source path/to/zsh_sc
 ```
