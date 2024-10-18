@@ -1,5 +1,9 @@
 # zsh
 Add the following at the beginning of the `.zshrc`
 ```zsh
-source $HOME/.zsh_sc
+oc_user="VPN-USERNAME"
+oc_pwd='VPN-PASSWORD'
+oc_gateway="VPN-GATEWAY"
+
+source path/to/.zsh_sc
 ```

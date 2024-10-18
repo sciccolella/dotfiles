@@ -19,6 +19,8 @@ precmd-git-status() {
 precmd-ssh() {
   if [[ -n $SSH_CLIENT ]] || [[ -n $SSH_TTY ]]; then
     psvar[5]+="%F{#8bd5ca} %n@%m%f"
+  elif [[ -f $HOME/.openconnect.pid ]]; then
+    psvar[5]="%F{#f4dbd6}󰖂 %n#oc-vpn%f"
   else
     psvar[5]="%F{#d1b3f5} %n%f"
   fi
@@ -179,4 +181,46 @@ bindkey "^[[1;5C" forward-word
 # Disable Prompt changing behaviours
 export CONDA_CHANGEPS1=false
 export VIRTUAL_ENV_DISABLE_PROMPT=true
+
+# Openconnect utility
+oc_pidfile="$HOME/.openconnect.pid"
+oc() {
+  oc-usage() {
+      print "oc - openconnect utility"
+      print "usage oc [c|d]"
+      print "   c[onnect] to ravpn.unimib.it saving PID to $oc_pidfile"
+      print "             expects the password to be in \$oc_pwd"
+      print "   d[disconnect] kill to PID in $oc_pidfile"
+  }
+
+  if [[ $# < 1 ]]; then 
+    oc-usage
+    return
+  fi
+  if [[ $1 = "c"* ]]; then
+    if [[ -f $oc_pidfile ]]; then
+      print "[oc] vpn already connected"
+      return
+    fi
+    # NOTE: if more connections are necessary
+    # we can use parameters $2...
+    print "[oc] connect ..."
+    echo $oc_pwd | sudo openconnect \
+      --protocol=gp  --passwd-on-stdin -b \
+      --pid-file=$oc_pidfile\
+      $oc_gateway -u $oc_user
+    sleep 1 # for flushing stdout
+  elif [[ $1 = "d"* ]]; then
+    if [[ ! -f $oc_pidfile ]]; then
+      print "[oc] vpn not connected"
+      return
+    fi
+    print "[oc] disconnect ..."
+    sudo pkill -F $oc_pidfile
+    sleep 1 # for flushing stdout
+  else
+    oc-usage
+    return
+  fi
+}
 
