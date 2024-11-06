@@ -19,7 +19,7 @@ precmd-git-status() {
 precmd-ssh() {
   if [[ -n $SSH_CLIENT ]] || [[ -n $SSH_TTY ]]; then
     psvar[5]+="%F{#8bd5ca} %n@%m%f"
-  elif [[ -f $HOME/.openconnect.pid ]]; then
+  elif [[ -f $oc_pidfile ]]; then
     psvar[5]="%F{#f4dbd6}󰖂 %n#oc-vpn%f"
   else
     psvar[5]="%F{#d1b3f5} %n%f"
