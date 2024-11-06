@@ -12,7 +12,7 @@ zsct_ssh_none=183
 zsct_env_py=189
 zsct_env_cnt=189
 zsct_env_nix=216
-zsct_exit=167
+zsct_exit=174
 zsct_dir=147
 
 # PROMPT setup
