@@ -1,7 +1,19 @@
 ## vim:ft=zsh
 #
-
 # https://thevaluable.dev/zsh-install-configure-mouseless/
+
+# Theme
+## Color256
+zsct_git_clean=151
+zsct_git_dirty=223
+zsct_ssh_host=122
+zsct_ssh_vpn=224
+zsct_ssh_none=183
+zsct_env_py=189
+zsct_env_cnt=189
+zsct_env_nix=216
+zsct_exit=167
+zsct_dir=147
 
 # PROMPT setup
 precmd-newline() { print -P '' }
@@ -11,40 +23,40 @@ precmd-git-status() {
   local STATUS=$(command git status --porcelain 2> /dev/null | tail -n1)
 
   if [[ -n $STATUS ]]; then
-    psvar[1]="%F{#eed49f}${vcs_info_msg_0_}%f"
+    psvar[1]="%F{${zsct_git_dirty}}${vcs_info_msg_0_}%f"
   else
-    psvar[1]="%F{#a6da95}${vcs_info_msg_0_}%f"
+    psvar[1]="%F{${zsct_git_clean}${vcs_info_msg_0_}%f"
   fi
 }
 precmd-ssh() {
   if [[ -n $SSH_CLIENT ]] || [[ -n $SSH_TTY ]]; then
-    psvar[5]+="%F{#8bd5ca} %n@%m%f"
+    psvar[5]+="%F{${zsct_ssh_host}} %n@%m%f"
   elif [[ -f $oc_pidfile ]]; then
-    psvar[5]="%F{#f4dbd6}󰖂 %n#oc-vpn%f"
+    psvar[5]="%F{${zsct_ssh_vpn}}󰖂 %n#oc-vpn%f"
   else
-    psvar[5]="%F{#d1b3f5} %n%f"
+    psvar[5]="%F{${zsct_ssh_none}} %n%f"
   fi
 }
 precmd-venvs() {
   psvar[2]=""
   if [[ -n $VIRTUAL_ENV ]]; then
-    psvar[2]+="%F{#cad3f5} v:${VIRTUAL_ENV##*/} %f"
+    psvar[2]+="%F{${zsct_env_py}} v:${VIRTUAL_ENV##*/} %f"
   fi
   if [[ -n $CONDA_DEFAULT_ENV ]]; then
-    psvar[2]+="%F{#cad3f5} c:${CONDA_DEFAULT_ENV}%f "
+    psvar[2]+="%F{${zsct_env_py}} c:${CONDA_DEFAULT_ENV}%f "
   fi
   if [[ -n $CONTAINER_ID ]]; then
-    psvar[2]+="%F{#cad3f5} ${CONTAINER_ID}%f "
+    psvar[2]+="%F{${zsct_env_cnt}} ${CONTAINER_ID}%f "
   fi
   if [[ -n $IN_NIX_SHELL ]]; then
-    psvar[2]+="%F{#f5a97f}󱄅 ${NIX_SHELL_NAME}%f "
+    psvar[2]+="%F{${zsct_env_nix}}󱄅 ${NIX_SHELL_NAME}%f "
   fi
 }
 precmd-exitcode() {
   local LAST_EC=$?
   psvar[3]=""
   if [[ $LAST_EC -ne 0 ]]; then 
-    psvar[3]="%F{#ed8796}[${LAST_EC}]%f "
+    psvar[3]="%F{${zsct_exit}}[${LAST_EC}]%f "
   fi
 }
 precmd-timer() {
@@ -108,7 +120,7 @@ setopt PROMPT_SUBST
 PNEWLINE=$'\n'
 # psvar[4]->Elapsed time | psvar[2]->Virtual envs
 PROMPT='%F{white}${psvar[4]} %f${psvar[2]}${PNEWLINE}' # first line
-PROMPT+='${psvar[5]}:%F{#91a8f7}%~%f ' # user@host:path/to/pwd
+PROMPT+='${psvar[5]}:%F{${zsct_dir}}%~%f ' # user@host:path/to/pwd
 PROMPT+='${psvar[1]} ' # psvar[1]->git status
 PROMPT+='${PNEWLINE}${psvar[3]}%# ' #psvar[3]->Error code
 
