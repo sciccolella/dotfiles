@@ -25,7 +25,7 @@ precmd-git-status() {
   if [[ -n $STATUS ]]; then
     psvar[1]="%F{${zsct_git_dirty}}${vcs_info_msg_0_}%f"
   else
-    psvar[1]="%F{${zsct_git_clean}${vcs_info_msg_0_}%f"
+    psvar[1]="%F{${zsct_git_clean}}${vcs_info_msg_0_}%f"
   fi
 }
 precmd-ssh() {
