@@ -148,10 +148,11 @@ alias l='ls -lah'
 alias ll='ls -lh'
 alias md='mkdir -p'
 alias rd=rmdir
-alias ls='ls --color=auto'
+alias ls='ls --color=always'
 
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 # Colorize completions using default `ls` colors.
+# More complete alternative at https://github.com/trapd00r/LS_COLORS/blob/master/lscolors.sh
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu select
 zstyle ':completion:*' squeeze-slashes true
