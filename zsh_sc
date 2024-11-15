@@ -156,6 +156,8 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu select
 zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
+
 
 # Setup config for SSH and SCP (and derivates)
 zstyle ':completion:*:(ssh|scp|rsync|sshfs|mosh):*:users' users 
