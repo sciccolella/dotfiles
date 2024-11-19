@@ -52,7 +52,7 @@ precmd-venvs() {
     psvar[2]+="%F{${zsct_env_nix}}󱄅 s:${NIX_SHELL_NAME}%f "
   fi
   if [[ -n $NIX_PROFILES ]]; then
-    local nixname=$(readlink ~/.nix-profile)
+    local nixname=$(readlink ~/.nix-profile | xargs basename)
     psvar[2]+="%F{${zsct_env_nix}}󱄅 p:${nixname}%f "
   fi
 }
