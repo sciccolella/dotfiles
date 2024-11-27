@@ -46,7 +46,12 @@ precmd-venvs() {
     psvar[2]+="%F{${zsct_env_py}} c:${CONDA_DEFAULT_ENV}%f "
   fi
   if [[ -n $CONTAINER_ID ]]; then
-    psvar[2]+="%F{${zsct_env_cnt}} ${CONTAINER_ID}%f "
+    local OS=$(uname)
+    if [ -f /etc/os-release ]; then
+      . /etc/os-release
+      OS=$NAME
+    fi
+    psvar[2]+="%F{${zsct_env_cnt}} ${CONTAINER_ID}:${OS}%f "
   fi
   if [[ -n $IN_NIX_SHELL ]]; then
     psvar[2]+="%F{${zsct_env_nix}}󱄅 s:${NIX_SHELL_NAME}%f "
