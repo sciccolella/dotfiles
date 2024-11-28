@@ -23,4 +23,5 @@ c-zshrc: zsh_sc
 
 	
 c-nvim: nvim
+	mkdir -p $${HOME}/.config/
 	-ln -rs $< $${HOME}/.config/
