@@ -16,7 +16,7 @@ oc_gateway="VPN-GATEWAY"
 source path/to/zsh_sc
 ```
 
-# Notes on `tmux.cong`
+# Notes on `tmux.conf`
 The `Makefile` will try to symlink `~/.tmux.conf` to the config file on the repo. 
 If the file exists, the `ln` will fail and the `make` will continue running.
 If you wish to force the symlink you can run `make all-force`
