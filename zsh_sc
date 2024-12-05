@@ -251,3 +251,4 @@ oc() {
   fi
 }
 
+alias tmux-fix-ssh='eval $(tmux show-env -s |grep "^SSH_")'
