@@ -169,8 +169,8 @@ zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower
 
 # Setup config for SSH and SCP (and derivates)
 zstyle ':completion:*:(ssh|scp|rsync|sshfs|mosh):*:users' users 
-zstyle -e ':completion:*:hosts' hosts 'reply=( $(grep "^Host" $HOME/.ssh/config | tr -s " " | cut -d" " -f2 | sort -u | xargs) )'
-zstyle ':completion:*:(scp|sshfs|mosh):*' format ' %F{#f5a97f}-- %d --%f'
+zstyle -e ':completion:*:hosts' hosts 'reply=( $(grep -s "^Host" $HOME/.ssh/config | tr -s " " | cut -d" " -f2 | sort -u | xargs) )'
+zstyle ':completion:*:(scp|sshfs|mosh):*' format ' %F{180}-- %d --%f'
 zstyle ':completion:*:(scp|rsync|sshfs|mosh):*' group-name ''
 zstyle ':completion:*:(scp|rsync|sshfs):*' group-order hosts files 
 
