@@ -180,7 +180,9 @@ autoload -Uz compinit; compinit
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
-setopt appendhistory
+setopt appendhistory   # append instead of overwrite
+setopt inc_append_history  # write each command right after it runs, not just at exit
+setopt share_history    # also reload other shells' new lines before each prompt
 
 # Search history with written prefix with arrow keys
 autoload -U up-line-or-beginning-search
